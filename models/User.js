@@ -21,7 +21,7 @@ const userSchema = new Schema({
         //     ref: "Thought"
         // }
     ],
-    friends: [userSchema]
+    //friends: [userSchema]
 },
 {
     toJSON: {
@@ -32,9 +32,9 @@ const userSchema = new Schema({
 });
 
 //Create virtual
-userSchema.virtual("friendCount").get(function() {
-    return this.friends.length;
-});
+// userSchema.virtual("friendCount").get(function() {
+//     return this.friends.length;
+// });
 
 // Create the model based on the schema
 const User = model("User", userSchema);
