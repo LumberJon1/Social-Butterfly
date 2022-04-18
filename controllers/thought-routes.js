@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Thought = require("../models/Thought");
 const User = require("../models/User");
 
+
 // GET all route for all thoughts
 router.get("/", (req, res) => {
     Thought.find({})
@@ -90,6 +91,36 @@ router.delete("/:id", (req, res) => {
         console.log(err);
         res.status(400).json(err);
     });
+});
+
+// REACTION ROUTES
+
+// POST a new reaction to a thought by ID
+router.post("/:thoughtId/reactions", ({params, body}, res) => {
+    Thought.findOneAndUpdate(
+        {_id: params.thoughtId},
+        {$push: {reactions: body}},
+        {new: true}
+    )
+    .then(thoughtData => {
+        if (!thoughtData) {
+            res.status(404).json({message: "No thought with this ID"});
+            return;
+        }
+        res.json(thoughtData);
+    })
+    .catch(err => res.json(err));
+});
+
+// DELETE a reaction from a thought
+router.delete("/:thoughtID/reactions/:reactionID", (req, res) => {
+    Thought.findOneAndUpdate(
+        {_id: req.params.thoughtID},
+        {$pull: {reactions: {reactionID: req.params.reactionID}}},
+        {new: true}
+    )
+    .then(thoughtData => res.json(thoughtData))
+    .catch(err => res.json(err));
 });
 
 module.exports = router;
